@@ -16,11 +16,6 @@ async function login(event) {
             body: JSON.stringify({ email: email, password: password })
         });
 
-        // Vérification si la réponse est correcte (statut 200 ou 201)
-        // if (response.ok) {
-        //    const data = await response.json(); // Récupérer la réponse JSON (par exemple, un token)
-        //    console.log("Réponse de l'API:", data);
-
         if (!response.ok) {
             const errorData = await response.json();  // Si l'API renvoie un message d'erreur spécifique
             document.getElementById('message').textContent = errorData.message || 'Nom d\'utilisateur ou mot de passe incorrect.'; 
@@ -38,8 +33,8 @@ async function login(event) {
         // Affichage du succès de la connexion
          alert('Connexion réussie !');
 
-        // Vous pouvez ici rediriger vers une autre page ou stocker le token
-        // Exemple : localStorage.setItem('token', data.token);
+         // Rediriger vers index.html après la connexion réussie
+         window.location.href = "index.html"; 
 
     } catch (error) {
         // En cas d'erreur dans la requête ou la connexion au serveur
@@ -60,6 +55,45 @@ window.addEventListener('load', function() {
     }
 });
 
+// Vérification au chargement de la page pour la redirection si le token est présent
+window.addEventListener('load', function() {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        document.getElementById('message').textContent = 'Vous êtes déjà connecté. Redirection en cours...';
+        // Rediriger l'utilisateur vers la page d'accueil (index.html) s'il est déjà connecté
+        window.location.href = "index.html";
+    }
+});
+
+window.addEventListener('load', function() {
+    const loginButton = document.getElementById('loginButton');
+    const token = localStorage.getItem('authToken');
+
+    if (token) {
+        // Si un token est trouvé, changer le texte en "Logout"
+        loginButton.textContent = 'Logout';
+
+        // Ajouter un événement "click" pour déconnecter l'utilisateur
+        loginButton.addEventListener('click', function() {
+            // Supprimer le token du localStorage
+            localStorage.removeItem('authToken');
+            alert('Vous êtes déconnecté.');
+
+            // Changer le texte du bouton en "Login" après déconnexion
+            loginButton.textContent = 'Login';
+
+            // Optionnel : rediriger vers la page de login
+            // window.location.href = "login.html";
+        });
+    } else {
+        // Si pas de token, ajouter un lien vers la page de login
+        loginButton.addEventListener('click', function() {
+            // Rediriger vers la page de connexion
+            window.location.href = "login.html";
+        });
+    }
+});
+
     // Lorsqu'on clique sur le bouton "Log Off"
     const logoffButton = document.getElementById('btn_logoff');
 
@@ -72,5 +106,5 @@ window.addEventListener('load', function() {
         document.getElementById('loginForm').reset();  // Réinitialiser le formulaire
 
         // Optionnel : rediriger vers la page de login ou une autre page
-        // window.location.href = "login.html";
+        // window.location.href = "index.html";
 });
