@@ -70,7 +70,7 @@ window.addEventListener('load', function() {
     const token = localStorage.getItem('authToken');
 
     if (token) {
-        // Si un token est trouvé, changer le texte en "Logout"
+        // Si un token est trouvé, changer le texte en "logout"
         loginButton.textContent = 'Logout';
 
         // Ajouter un événement "click" pour déconnecter l'utilisateur
