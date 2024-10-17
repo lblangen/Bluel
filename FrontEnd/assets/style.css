@@ -261,6 +261,53 @@ input[type="password"] {
 	height: 80%;
 }
 
+.modal-content img {
+    width: 10%;
+    height: auto;
+    object-fit: contain;
+}
+
+.modal-gallery {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    padding: 20px;
+}
+
+.modal-gallery figure {
+	position: relative;
+    margin: 0;
+    text-align: center;
+}
+
+.modal-gallery img {
+    width: 50%;
+    height: auto;
+    object-fit: cover;
+}
+
+.modal-gallery .delete-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: red;
+    font-size: 1.2em;
+}
+
+.modal-add-projet {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#btn_addprojet{
+	text-align: center;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
 .close-modal {
     color: #aaa;
     float: right;
@@ -275,3 +322,11 @@ input[type="password"] {
     cursor: pointer;
 }
 
+.delete-icon {
+    color: red;
+    margin-left: 10px;
+}
+
+.delete-icon:hover {
+    color: darkred;
+}

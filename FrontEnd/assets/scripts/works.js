@@ -36,17 +36,19 @@ async function loadProjects() {
             throw new Error('Erreur lors du chargement des projets');
         }
         const projects = await response.json();
-        displayProjects(projects);
+        displayProjects(projects); // Affichage sur la page
+        displayProjectsModal(projects); // Affichage dans la modale
     } catch (error) {
         console.error("Erreur lors du chargement des projets :", error);
     }
 }
 
-// Fonction pour afficher les projets dans la galerie
+// Fonction pour afficher les projets dans la galerie de la page
 function displayProjects(projects) {
     const gallery = document.querySelector('.gallery');
+    
     if (gallery) {
-        gallery.innerHTML = ''; // Vider le contenu existant de la galerie
+        gallery.innerHTML = ''; // Vider la galerie
 
         projects.forEach(project => {
             const figure = document.createElement('figure');
@@ -62,6 +64,44 @@ function displayProjects(projects) {
             gallery.appendChild(figure);
         });
     }
+}
+
+// Fonction pour afficher les projets dans la modale avec option de suppression
+function displayProjectsModal(projects) {
+    const modalGallery = document.querySelector('.modal-gallery');
+    
+    if (modalGallery) {
+        modalGallery.innerHTML = '';
+
+        projects.forEach((project, index) => {
+            const figure = document.createElement('figure');
+            const img = document.createElement('img');
+            const deleteIcon = document.createElement('i');  // Icône poubelle
+
+            img.src = project.imageUrl;
+            img.alt = project.title;
+
+            // Ajouter l'icône de suppression (font-awesome)
+            deleteIcon.classList.add('fa', 'fa-trash', 'delete-icon');
+            deleteIcon.addEventListener('click', () => deleteProject(index, projects));
+
+            // Ajouter tout à la figure
+            figure.appendChild(img);
+            figure.appendChild(deleteIcon);
+
+            modalGallery.appendChild(figure);
+        });
+    }
+}
+
+// Fonction pour supprimer un projet
+function deleteProject(index, projects) {
+    // Supprimer le projet de l'array
+    projects.splice(index, 1);
+
+    // Mettre à jour les galeries après suppression
+    displayProjects(projects);
+    displayProjectsModal(projects);
 }
 
 // Charger les projets au chargement de la page
