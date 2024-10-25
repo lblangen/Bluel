@@ -240,16 +240,17 @@ input[type="password"] {
 
 /** Modale **/
 
-.modal {
-    display: none;
+.modal, #modal-add-project {
     position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
+    top: 50%;
+    left: 50%;
+	transform: translate(-50%, -50%);
+    width: 630px;
+    height: 688px;
+    z-index: 10;
+    display: none;
+    box-sizing: border-box;
+    padding: 20px;
 }
 
 .modal-content {
@@ -280,8 +281,8 @@ input[type="password"] {
 }
 
 .modal-gallery img {
-    width: 50%;
-    height: auto;
+    width: 77px;
+    height: 100px;
     object-fit: cover;
 }
 
@@ -301,11 +302,43 @@ input[type="password"] {
     margin-top: 20px;
 }
 
-#btn_addprojet{
+.content-second-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+label, input {
+	display: block;
+    margin-bottom: 10px;
+}
+
+#btn_addprojet, #btn_validation{
 	text-align: center;
     border: none;
     padding: 10px 20px;
     cursor: pointer;
+}
+
+.modal-content-secondary {
+    z-index: 20;
+}
+
+.back-arrow {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.close-modal-add {
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.modal-validation-projet{
+	display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
 }
 
 .close-modal {
