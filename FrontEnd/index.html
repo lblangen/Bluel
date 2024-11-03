@@ -74,7 +74,16 @@
         <form id="addProjectForm">
 			<div class="content-second-modal"></div>
             <label for="photo"></label>
-            <input type="file" id="photo" name="photo" accept="image/*" required>
+            <input type="file" id="photo" name="photo" accept="image/*" required style="display: none;">
+
+			<div id="preview-container">
+				<div id="default-preview">
+					<img src="icon.png" alt="Icône d'ajout" class="icon-image">
+					<p>Ajouter photo</p>
+					<p>jpg, png - 4mo max</p>
+				</div>
+				<img id="image-preview" src="" alt="Aperçu de l'image" style="display: none;">
+			</div>
 
             <label for="title">Titre</label>
             <input type="text" id="title" name="title" required>
@@ -83,8 +92,7 @@
 			<select id="category" name="category" required>
     		<option value=""></option>
 			</select>
-
-			</div>
+			
 			<div class="modal-validation-projet">
             <input id="btn_validation" type="submit" value="Valider">
 			</div>

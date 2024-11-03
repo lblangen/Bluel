@@ -182,3 +182,101 @@ async function loadCategories() {
 
 // Appel de la fonction pour charger les catégories au chargement de la page
 document.addEventListener('DOMContentLoaded', loadCategories);
+
+
+// Preview image
+const previewContainer = document.getElementById('preview-container');
+const photoInput = document.getElementById('photo');
+const defaultPreview = document.getElementById('default-preview');
+const previewImage = document.getElementById('image-preview');
+
+previewContainer.addEventListener('click', function() {
+    photoInput.click();  // Déclenche le clic sur l'input de fichier
+});
+
+photoInput.addEventListener('change', function(event) {
+    const file = event.target.files[0];
+
+    if (file) {
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            previewImage.src = e.target.result;
+            previewImage.style.display = 'block';
+            defaultPreview.style.display = 'none';  // Cache le contenu par défaut
+        };
+
+        reader.readAsDataURL(file);
+    } else {
+        previewImage.style.display = 'none';  // Cache l'aperçu d'image
+        defaultPreview.style.display = 'flex';  // Montre le contenu par défaut
+    }
+});
+
+// Vérifie si l'utilisateur est authentifié en fonction du authToken
+function isUserAuthenticated() {
+    return !!localStorage.getItem('authToken');
+}
+
+// Fonction pour supprimer un projet dans l'affichage de la modale seulement
+function removeProjectFromModal(projectId) {
+    const projectFigure = document.querySelector(`figure[data-id='${projectId}']`);
+    if (projectFigure) {
+        projectFigure.remove();  // Supprime uniquement l'élément du DOM
+    }
+}
+
+// Fonction pour supprimer un projet depuis l'API
+async function deleteProjectFromAPI(projectId) {
+    const token = localStorage.getItem('authToken');
+    
+    if (!token) {
+        alert("Vous devez être connecté pour supprimer ce projet.");
+        window.location.href = 'login.html';
+        return;
+    }
+    
+    try {
+        const response = await fetch(`http://127.0.0.1:5678/api/works/${projectId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response.status === 401) {
+            alert("Session expirée. Veuillez vous reconnecter.");
+            localStorage.removeItem('authToken');
+            window.location.href = 'login.html';
+            return;
+        }
+
+        if (!response.ok) {
+            throw new Error("Erreur lors de la suppression du projet dans l'API");
+        }
+        
+        console.log(`Projet avec l'ID ${projectId} supprimé de l'API.`);
+        return true;
+    } catch (error) {
+        console.error("Erreur lors de la suppression du projet dans l'API :", error);
+        return false;
+    }
+}
+
+// Fonction pour supprimer un projet dans la modale et la galerie principale
+async function deleteProject(projectId, projects) {
+    if (isUserAuthenticated()) {
+        const deleteSuccess = await deleteProjectFromAPI(projectId); // Supprime côté serveur
+        if (deleteSuccess) {
+            // Supprime l'affichage dans la modale
+            removeProjectFromModal(projectId);
+
+            // Supprime le projet dans le tableau `projects` et met à jour la galerie principale
+            const index = projects.findIndex(project => project.id === projectId);
+            if (index !== -1) {
+                projects.splice(index, 1);
+                displayProjects(projects);  // Mettre à jour la galerie principale
+            }
+        }
+    }
+}
