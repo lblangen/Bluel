@@ -123,7 +123,6 @@ li:hover {
 }
 #portfolio h2 {
 	text-align: center;
-	margin-bottom: 1em;
 }
 .gallery {
 	width: 100%;
@@ -200,7 +199,10 @@ footer nav ul {
 }
 
 .login-container {
-    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    padding-top: 100px;
+    margin: auto;
     border-radius: 10px;
     max-width: 400px;
     width: 100%;
@@ -223,10 +225,50 @@ input[type="password"] {
     cursor: pointer;
 }
 
+.forgot-password {
+    padding-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/** FILTERS **/
+
+.filter-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+}
+
+
+.filter-button {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.filter-button:hover {
+    background-color: #0056b3;
+}
+
 /** Gallery **/
 
+.filter-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
 .header-container {
+    margin-bottom: 3em;
 	display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .edit-container {
@@ -235,7 +277,8 @@ input[type="password"] {
 }
 
 .edit-icon {
-    margin-right: 5px;
+    margin-right: 10px;
+    margin-left: 20px;
 }
 
 /** Modale **/

@@ -72,16 +72,22 @@ function displayProjectsModal(projects) {
     if (modalGallery) {
         modalGallery.innerHTML = '';
 
-        projects.forEach((project, index) => {
+        projects.forEach((project) => {
+
             const figure = document.createElement('figure');
             const img = document.createElement('img');
             const deleteIcon = document.createElement('i');
+            deleteIcon.id = project.id;
 
             img.src = project.imageUrl;
             img.alt = project.title;
 
             deleteIcon.classList.add('fa', 'fa-trash', 'delete-icon');
-            deleteIcon.addEventListener('click', () => deleteProject(index, projects));
+            deleteIcon.addEventListener('click', (event) => {
+                const projectId = event.target.id;
+                deleteProject(projectId)
+
+            });
 
             figure.appendChild(img);
             figure.appendChild(deleteIcon);
@@ -90,13 +96,6 @@ function displayProjectsModal(projects) {
     }
 }
 
-// Fonction pour supprimer un projet
-function deleteProject(index, projects) {
-    projects.splice(index, 1);
-
-    displayProjects(projects);
-    displayProjectsModal(projects);
-}
 
 // Charger les projets au chargement de la page
 document.addEventListener('DOMContentLoaded', loadProjects);
@@ -226,57 +225,34 @@ function removeProjectFromModal(projectId) {
     }
 }
 
-// Fonction pour supprimer un projet depuis l'API
-async function deleteProjectFromAPI(projectId) {
-    const token = localStorage.getItem('authToken');
-    
-    if (!token) {
-        alert("Vous devez être connecté pour supprimer ce projet.");
-        window.location.href = 'login.html';
-        return;
-    }
-    
-    try {
-        const response = await fetch(`http://127.0.0.1:5678/api/works/${projectId}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        if (response.status === 401) {
-            alert("Session expirée. Veuillez vous reconnecter.");
-            localStorage.removeItem('authToken');
-            window.location.href = 'login.html';
-            return;
-        }
-
-        if (!response.ok) {
-            throw new Error("Erreur lors de la suppression du projet dans l'API");
-        }
-        
-        console.log(`Projet avec l'ID ${projectId} supprimé de l'API.`);
-        return true;
-    } catch (error) {
-        console.error("Erreur lors de la suppression du projet dans l'API :", error);
-        return false;
-    }
-}
 
 // Fonction pour supprimer un projet dans la modale et la galerie principale
-async function deleteProject(projectId, projects) {
-    if (isUserAuthenticated()) {
-        const deleteSuccess = await deleteProjectFromAPI(projectId); // Supprime côté serveur
-        if (deleteSuccess) {
-            // Supprime l'affichage dans la modale
-            removeProjectFromModal(projectId);
+async function deleteProject(projectId) {
 
-            // Supprime le projet dans le tableau `projects` et met à jour la galerie principale
-            const index = projects.findIndex(project => project.id === projectId);
-            if (index !== -1) {
-                projects.splice(index, 1);
-                displayProjects(projects);  // Mettre à jour la galerie principale
-            }
-        }
+    const token = localStorage.getItem('authToken');
+
+    if (isUserAuthenticated()) {
+
+        fetch(`http://localhost:5678/api/works/${projectId}`,
+            {
+                method: "DELETE",
+                headers:
+                    {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
+            })
+            .then( response => {
+                console.log(response);
+                if(response.status === 204) {
+                    removeProjectFromModal(projectId);
+                    // Supprime le projet dans le tableau `projects` et met à jour la galerie principale
+                    const index = projects.findIndex(project => project.id === projectId);
+                    if (index !== -1) {
+                        projects.splice(index, 1);
+                        displayProjects(projects);  // Mettre à jour la galerie principale
+                    }
+                }
+            })
     }
 }
