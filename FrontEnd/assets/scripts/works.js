@@ -24,19 +24,82 @@ function checkLoginStatus() {
     }
 }
 
+async function getCategories() {
+    try {
+        const response = await fetch("http://127.0.0.1:5678/api/categories");
+        if (!response.ok) {
+            throw new Error('Erreur lors du chargement des catégories');
+        }
+
+        const categories = await response.json();
+        const filterContainer = document.querySelector('.filter-container');
+
+        // Vider les filtres existants pour éviter des doublons
+        filterContainer.innerHTML = '';
+
+        // Ajouter un bouton "Tous" pour afficher tous les projets
+        const allButton = document.createElement('button');
+        allButton.className = 'btn-filtre';
+        allButton.textContent = 'Tous';
+        allButton.addEventListener('click', () => loadProjects());
+        filterContainer.appendChild(allButton);
+
+        // Ajouter un bouton pour chaque catégorie
+        categories.forEach(category => {
+            const catButton = document.createElement('button');
+            catButton.className = 'btn-filtre';
+            catButton.textContent = category.name;
+            catButton.addEventListener('click', () => loadProjects(category.id));
+            filterContainer.appendChild(catButton);
+        });
+    } catch (error) {
+        console.error("Erreur lors du chargement des catégories :", error);
+    }
+}
+
+
 // Appel de la fonction au chargement de la page
 window.addEventListener('DOMContentLoaded', checkLoginStatus);
+window.addEventListener('DOMContentLoaded', getCategories);
+
+
+
 
 // Fonction pour charger les projets depuis l'API
-async function loadProjects() {
+async function loadProjects(id_cat = null) {
     try {
         const response = await fetch("http://127.0.0.1:5678/api/works");
         if (!response.ok) {
             throw new Error('Erreur lors du chargement des projets');
         }
         const projects = await response.json();
-        displayProjects(projects); // Affichage sur la page
-        displayProjectsModal(projects); // Affichage dans la modale
+        if(id_cat === null)
+        {
+            displayProjects(projects); // Affichage sur la page
+            displayProjectsModal(projects); // Affichage dans la modale
+        }
+        else {
+            const gallery = document.querySelector('.gallery');
+            if (gallery) {
+                gallery.innerHTML = '';
+              const result  =  projects.filter(projet => projet.categoryId == id_cat);
+
+                result.forEach(project => {
+                    const figure = document.createElement('figure');
+                    const img = document.createElement('img');
+                    const figcaption = document.createElement('figcaption');
+
+                    figure.setAttribute('data-categorie', project.categoryId)
+                    img.src = project.imageUrl;
+                    img.alt = project.title;
+                    figcaption.textContent = project.title;
+
+                    figure.appendChild(img);
+                    figure.appendChild(figcaption);
+                    gallery.appendChild(figure);
+                });
+            }
+        }
     } catch (error) {
         console.error("Erreur lors du chargement des projets :", error);
     }
@@ -54,6 +117,7 @@ function displayProjects(projects) {
             const img = document.createElement('img');
             const figcaption = document.createElement('figcaption');
 
+            figure.setAttribute('data-categorie', project.categoryId)
             img.src = project.imageUrl;
             img.alt = project.title;
             figcaption.textContent = project.title;
@@ -98,7 +162,7 @@ function displayProjectsModal(projects) {
 
 
 // Charger les projets au chargement de la page
-document.addEventListener('DOMContentLoaded', loadProjects);
+document.addEventListener('DOMContentLoaded', loadProjects());
 
 // Fonction pour ouvrir et fermer les modales
 function openModal() {
